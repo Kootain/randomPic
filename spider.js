@@ -37,7 +37,8 @@ var unsplashImg = function(sres,req){
     // console.log(element);
     var $element = $(element);
     var pid = $element.children('img').attr('src').match(/-[0-9]+-[0-9 a-z]+/);
-    if (pid[0].length > 20){
+    console.log(pid);
+    if (pid.length && pid[0].length > 20){
       items.push({
         title: pid[0],
         href: 'https://images.unsplash.com/photo' + pid + '?dpr=1.00&fit=crop&fm=jpg&q=100'
