@@ -1,4 +1,4 @@
-var PATH = 'd:/data.json';
+var PATH = './data.json';
 
 var express = require('express');
 var util = require('util')
@@ -34,7 +34,7 @@ var unsplashImg = function(sres,req){
     if (pid[0].length > 20){
       items.push({
         title: pid,
-        href: 'https://images.unsplash.com/photo' + pid + util.format('?dpr=1.00&fit=crop&fm=jpg&h=%s&q=100&w=%s',req.query.h||'',req.query.w||'')
+        href: 'https://images.unsplash.com/photo' + pid + '?dpr=1.00&fit=crop&fm=jpg&q=100'
       });
     }
   });
@@ -45,7 +45,7 @@ var unsplashImg = function(sres,req){
 app.get('/photo.js', function (req, res, next) {
   // 用 superagent 去抓取 https://cnodejs.org/ 的内容
   
-    res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+'\'');
+    res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+url.format('&h=%s&w=%s',req.query.h,req.query.w)+'\'');
 });
 
 app.get('/update', function (req, res, next) {
