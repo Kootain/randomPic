@@ -13,6 +13,7 @@ var ep = new eventproxy();
 
 if(fs.existsSync(PATH)){
   log = JSON.parse(fs.readFileSync(PATH, 'utf8'));
+  console.log(log.length);
 }else{
 
 }
@@ -63,13 +64,14 @@ app.get('/update', function (req, res, next) {
 	});
 
 	for(var i = 1; i<=req.query.p; i++){
-		superagent.get('https://unsplash.com/?p='+i)
+		superagent.get('https://unsplash.com/?page='+i)
 		  .end(function (err, sres) {
 		    if (err) {
 		      console.log(err);
 		      return next(err);
 		    }
 		    var items = unsplashImg(sres,req);
+		    console.log(items[0].title);
 		    ep.emit('data',items);
 		    // fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
 		    // res.end('update '+items.length+' pics!');
