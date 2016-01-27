@@ -77,6 +77,7 @@ app.get('/update', function (req, res, next) {
 				items = items.concat(item);
 			})
 			fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
+			log = items;
 			console.log('Done!');
 			res.end('update '+items.length+' pics!');
 	});
