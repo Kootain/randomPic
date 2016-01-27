@@ -1,4 +1,5 @@
 var PATH = './data.json';
+var MAXCON = 10;
 
 var express = require('express');
 var util = require('util')
@@ -6,6 +7,7 @@ var superagent = require('superagent');
 var cheerio = require('cheerio');
 var fs = require('fs');
 var eventproxy = require('eventproxy');
+var async = require('async');
 
 var app = express();
 var log = {};
@@ -53,30 +55,57 @@ app.get('/photo.js', function (req, res, next) {
 
 app.get('/update', function (req, res, next) {
 
-	ep.after('data', req.query.p||1, function(items){
-		var result=[];
-		items.forEach(function(item){
-			result = result.concat(item);
-		});
-		fs.writeFileSync(PATH, JSON.stringify(result), 'utf8');
-		// console.log(items);
-		res.end('update '+result.length+' pics!');
-	});
+	// ep.after('data', req.query.p||1, function(items){
+	// 	var result=[];
+	// 	items.forEach(function(item){
+	// 		result = result.concat(item);
+	// 	});
+	// 	fs.writeFileSync(PATH, JSON.stringify(result), 'utf8');
+	// 	// console.log(items);
+	// 	res.end('update '+result.length+' pics!');
+	// });
 
-	for(var i = 1; i<=req.query.p; i++){
-		superagent.get('https://unsplash.com/?page='+i)
-		  .end(function (err, sres) {
-		    if (err) {
-		      console.log(err);
-		      return next(err);
-		    }
-		    var items = unsplashImg(sres,req);
-		    console.log(items[0].title);
-		    ep.emit('data',items);
+	// for(var i = 1; i<=req.query.p; i++){
+		// superagent.get('https://unsplash.com/?page='+i)
+		//   .end(function (err, sres) {
+		//     if (err) {
+		//       console.log(err);
+		//       return next(err);
+		//     }
+		//     var items = unsplashImg(sres,req);
+		//     console.log(items[0].title);
+		//     ep.emit('data',items);
 		    // fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
 		    // res.end('update '+items.length+' pics!');
-		  });
+	// 	  });
+	// }
+
+	var urls=[];
+	for(var i = 1; i<=req.query.p; i++){
+		urls.push('https://unsplash.com/?page='+i);
 	}
+	var con = 1,
+			count =1;
+	async.mapLimit(urls, MAXCON, function(url, callback){
+		superagent.get(url)
+		  .end(function (err, sres) {
+			  if (err) {
+			    console.log(err);
+			    return next(err);
+			  }
+			  var items = unsplashImg(sres,req);
+			  console.log('Downloading... '+ count+'/'+req.query.p + '('+(count++/req.query.p*100).toFixed(1)+'%)');
+			  callback(null,items);
+			});
+		},function(err,result){
+			var items=[];
+			result.forEach(function(item){
+				items = items.concat(item);
+			})
+			fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
+			console.log('Done!');
+			res.end('update '+items.length+' pics!');
+	});
 });
 
 app.listen(3000, function (req, res) {
