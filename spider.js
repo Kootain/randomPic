@@ -5,9 +5,12 @@ var util = require('util')
 var superagent = require('superagent');
 var cheerio = require('cheerio');
 var fs = require('fs');
+var eventproxy = require('eventproxy');
 
 var app = express();
 var log = {};
+var ep = new eventproxy();
+
 if(fs.existsSync(PATH)){
   log = JSON.parse(fs.readFileSync(PATH, 'utf8'));
 }else{
@@ -33,7 +36,7 @@ var unsplashImg = function(sres,req){
     var pid = $element.children('img').attr('src').match(/-[0-9 a-z -]+/);
     if (pid[0].length > 20){
       items.push({
-        title: pid,
+        title: pid[0],
         href: 'https://images.unsplash.com/photo' + pid + '?dpr=1.00&fit=crop&fm=jpg&q=100'
       });
     }
@@ -43,27 +46,35 @@ var unsplashImg = function(sres,req){
 
 
 app.get('/photo.js', function (req, res, next) {
-  // 用 superagent 去抓取 https://cnodejs.org/ 的内容
   
     res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+util.format('&h=%s&w=%s',req.query.h||'',req.query.w||'')+'\'');
 });
 
 app.get('/update', function (req, res, next) {
-  // 用 superagent 去抓取 https://cnodejs.org/ 的内容
-  superagent.get('https://unsplash.com/')
-    .end(function (err, sres) {
-      // 常规的错误处理
-      if (err) {
-        console.log(err);
-        return next(err);
-      }
-      // sres.text 里面存储着网页的 html 内容，将它传给 cheerio.load 之后
-      // 就可以得到一个实现了 jquery 接口的变量，我们习惯性地将它命名为 `$`
-      // 剩下就都是 jquery 的内容了
-      var items = unsplashImg(sres,req);
-      fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
-      res.end('update '+items.length+' pics!');
-    });
+
+	ep.after('data', req.query.p||1, function(items){
+		var result=[];
+		items.forEach(function(item){
+			result = result.concat(item);
+		});
+		fs.writeFileSync(PATH, JSON.stringify(result), 'utf8');
+		// console.log(items);
+		res.end('update '+result.length+' pics!');
+	});
+
+	for(var i = 1; i<=req.query.p; i++){
+		superagent.get('https://unsplash.com/?p='+i)
+		  .end(function (err, sres) {
+		    if (err) {
+		      console.log(err);
+		      return next(err);
+		    }
+		    var items = unsplashImg(sres,req);
+		    ep.emit('data',items);
+		    // fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
+		    // res.end('update '+items.length+' pics!');
+		  });
+	}
 });
 
 app.listen(3000, function (req, res) {
