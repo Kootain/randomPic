@@ -36,7 +36,7 @@ var unsplashImg = function(sres,req){
   $('.photo__image-container').each(function (idx, element) {
     // console.log(element);
     var $element = $(element);
-    var pid = $element.children('img').attr('src').match(/-[0-9 a-z -]+/);
+    var pid = $element.children('img').attr('src').match(/-[0-9]+-[0-9 a-z]+/);
     if (pid[0].length > 20){
       items.push({
         title: pid[0],
