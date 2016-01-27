@@ -58,7 +58,7 @@ app.get('/update', function (req, res, next) {
 	});
 
 	for(var i = 1; i<= req.query.p||1; i++){
-		superagent.get('https://unsplash.com/')
+		superagent.get('https://unsplash.com/?p='+i)
 		  .end(function (err, sres) {
 		    if (err) {
 		      console.log(err);
