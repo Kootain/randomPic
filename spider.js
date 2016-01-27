@@ -37,8 +37,7 @@ var unsplashImg = function(sres,req){
     // console.log(element);
     var $element = $(element);
     var pid = $element.children('img').attr('src').match(/-[0-9]+-[0-9 a-z]+/);
-    console.log(pid);
-    if (pid.length && pid[0].length > 20){
+    if (pid && pid[0].length > 20){
       items.push({
         title: pid[0],
         href: 'https://images.unsplash.com/photo' + pid + '?dpr=1.00&fit=crop&fm=jpg&q=100'
@@ -55,32 +54,6 @@ app.get('/photo.js', function (req, res, next) {
 });
 
 app.get('/update', function (req, res, next) {
-
-	// ep.after('data', req.query.p||1, function(items){
-	// 	var result=[];
-	// 	items.forEach(function(item){
-	// 		result = result.concat(item);
-	// 	});
-	// 	fs.writeFileSync(PATH, JSON.stringify(result), 'utf8');
-	// 	// console.log(items);
-	// 	res.end('update '+result.length+' pics!');
-	// });
-
-	// for(var i = 1; i<=req.query.p; i++){
-		// superagent.get('https://unsplash.com/?page='+i)
-		//   .end(function (err, sres) {
-		//     if (err) {
-		//       console.log(err);
-		//       return next(err);
-		//     }
-		//     var items = unsplashImg(sres,req);
-		//     console.log(items[0].title);
-		//     ep.emit('data',items);
-		    // fs.writeFileSync(PATH, JSON.stringify(items), 'utf8');
-		    // res.end('update '+items.length+' pics!');
-	// 	  });
-	// }
-
 	var urls=[];
 	for(var i = 1; i<=req.query.p; i++){
 		urls.push('https://unsplash.com/?page='+i);
@@ -112,5 +85,3 @@ app.get('/update', function (req, res, next) {
 app.listen(3000, function (req, res) {
   console.log('app is running at port 3000');
 });
-
-//dpr=1.00&fit=crop&fm=jpg&h=280&q=100&w=1200
