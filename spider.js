@@ -45,7 +45,7 @@ var unsplashImg = function(sres,req){
 app.get('/photo.js', function (req, res, next) {
   // 用 superagent 去抓取 https://cnodejs.org/ 的内容
   
-    res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+url.format('&h=%s&w=%s',req.query.h,req.query.w)+'\'');
+    res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+util.format('&h=%s&w=%s',req.query.h,req.query.w)+'\'');
 });
 
 app.get('/update', function (req, res, next) {
