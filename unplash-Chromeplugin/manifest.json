@@ -1,0 +1,12 @@
+{"name": "unsplashChange",
+ "version": "1.0",
+ "manifest_version":2, //最新版chrome这个值是2
+ "description": "test",
+ "icons": { "48": "1.jpg" }, //定义图片的大小，可以自己更改
+ "page_action": { "default_icon": "1.jpg" },//定义图片的名称，可以自己更改
+ "permissions": [ "tabs" ],
+ "content_scripts": [{
+     "matches": ["https://unsplash.com/"], //对哪些url生效
+    "js": ["unplashChange.js"]//定义本地.js文件名称，可以自己更改
+    }]
+}
