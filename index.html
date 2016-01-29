@@ -2,9 +2,64 @@
 <html>
 <head>
   <title></title>
+  <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<style type="text/css">
+	a {
+		float: right;
+
+	}
+@font-face {
+    font-family: 'icomoon';
+    src:    url('fonts/icomoon.eot?wkhu6c');
+    src:    url('fonts/icomoon.eot?wkhu6c#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?wkhu6c') format('truetype'),
+        url('fonts/icomoon.woff?wkhu6c') format('woff'),
+        url('fonts/icomoon.svg?wkhu6c#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-heart:before {
+    content: "\e900";
+    color: #f15151;
+}
+
+
+</style>
 </head>
+
+
+
 <body>
 <script type="text/javascript" src="http://localhost:3000/photo.js?h=280&w=1280"></script>
 <img src="?" onerror="this.src=bgimgUrl">
+<div class="result"></div>
+<script type="text/javascript">
+var title = bgimgUrl.split('?')[0];
+var like = function(){
+	console.log(bgimgUrl.split('?')[0]);
+	console.log(title);
+	$.get("http://localhost:3000/like?t="+title, function(data){
+		console.log(data);
+	});
+}
+
+</script>
+<span class="icon-heart" onclick="like"></span>
 </body>
 </html>

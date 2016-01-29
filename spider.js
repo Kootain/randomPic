@@ -1,4 +1,5 @@
 var PATH = './data.json';
+var PATH_LIKE = './like.json'
 var MAXCON = 10;
 
 var express = require('express');
@@ -9,9 +10,11 @@ var fs = require('fs');
 var eventproxy = require('eventproxy');
 var async = require('async');
 var events = require('events');
+var cors = require('cors');
 
 var app = express();
 var log = [];
+var like =[];
 var ep = new eventproxy();
 
 if(fs.existsSync(PATH)){
@@ -34,9 +37,10 @@ var makeImgTag = function(list){
   return result;
 
 };
+
 var compareImg = function(title){
   return function(e){
-    if (e.title == title) return 1;
+    if (e.title == title) return e;
     return 0;
   };
 };
@@ -53,7 +57,8 @@ var unsplashImg = function(sres,req){
       if (src && src.length == 2){
         items.push({
           title: title,
-          href: src[0] + '?dpr=1.00&fit=crop&fm=jpg&q=100'
+          href: src[0] + '?dpr=1.00&fit=crop&fm=jpg&q=100',
+          like : 0
         });
       }
     }else{
@@ -63,10 +68,36 @@ var unsplashImg = function(sres,req){
   return items;
 };
 
+app.use(cors());
+
+app.get('/like', function(req, res, next){
+  if(req.query.hasOwnProperty('t')){
+    var title = req.query.t;
+    var item = log.find(compareImg(title));
+    if(item){
+      item.like = item.like + 1;
+      fs.writeFileSync(PATH, JSON.stringify(log), 'utf8');
+      console.log(item.title+' like +1!' + item.like);
+      res.json(item);
+    }else{
+      res.json('no such pic!');
+    }
+  }else{
+    res.json('no such pic!');
+  }
+})
 
 app.get('/photo.js', function (req, res, next) {
     if(log.length){
-      res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+util.format('&h=%s&w=%s',req.query.h||'',req.query.w||'')+'\'');
+      var like = `var title = bgimgUrl.split('?')[0];
+var like = function(){
+  console.log(bgimgUrl.split('?')[0]);
+  console.log(title);
+  $.get("http://localhost:3000/like?t="+title, function(data){
+    console.log(data);
+  });
+}`;
+      res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+util.format('&h=%s&w=%s',req.query.h||'',req.query.w||'')+'\';'+like);
     }else{
       res.end('No data!');
     }
@@ -142,6 +173,8 @@ app.get('/update', function (req, res, next) {
   }
 
 });
+//End of router '/update'
+
 
 app.listen(3000, function (req, res) {
   console.log('app is running at port 3000');
