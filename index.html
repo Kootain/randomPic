@@ -54,7 +54,7 @@ var title = bgimgUrl.split('?')[0];
 var like = function(){
 	console.log(bgimgUrl.split('?')[0]);
 	console.log(title);
-	$.get("http://localhost:3000/like?t="+title, function(data){
+	jQuery.get("http://localhost:3000/like?t="+title, function(data){
 		console.log(data);
 	});
 }
