@@ -36,12 +36,11 @@ var unsplashImg = function(sres,req){
   $('.photo__image-container').each(function (idx, element) {
     // console.log(element);
     var $element = $(element);
-    // var pid = $element.children('img').attr('src').match(/-[0-9]+-[0-9 a-z]+/);
     var src = $element.children('img').attr('src').split('?');
     if (src && src.length == 2){
       items.push({
         title: src[0],
-        href: /*'https://images.unsplash.com/photo' + pid*/src[0] + '?dpr=1.00&fit=crop&fm=jpg&q=100'
+        href: src[0] + '?dpr=1.00&fit=crop&fm=jpg&q=100'
       });
     }
   });
