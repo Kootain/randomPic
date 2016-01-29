@@ -93,7 +93,7 @@ app.get('/photo.js', function (req, res, next) {
 var like = function(){
   console.log(bgimgUrl.split('?')[0]);
   console.log(title);
-  jQuery.get("http://localhost:3000/like?t="+title, function(data){
+  jQuery.get("http://jkxin.top:3000/like?t="+title, function(data){
     console.log(data);
   });
 }`;
