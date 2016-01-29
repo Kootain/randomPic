@@ -48,8 +48,7 @@ var unsplashImg = function(sres,req){
     // console.log(element);
     var $element = $(element);
     var src = $element.children('img').attr('src').split('?');
-    var title = src[0].split('/');
-    title = title[title.length-1];
+    var title = src[0];
     if(!log.find(compareImg(title))){
       if (src && src.length == 2){
         items.push({
@@ -75,9 +74,9 @@ app.get('/photo.js', function (req, res, next) {
 
 app.get('/update', function (req, res, next) {
   console.log(log.length);
-  if(log.length==0){
+  if(log.length==0||req.query.hasOwnProperty('p')){
   	var urls=[];
-  	for(var i = 1; i<=; i++){
+  	for(var i = 1; i<= (req.query.p || 50); i++){
   		urls.push('https://unsplash.com/?page='+i);
   	}
   	var con = 1,
@@ -90,7 +89,7 @@ app.get('/update', function (req, res, next) {
   			    return next(err);
   			  }
   			  var items = unsplashImg(sres,req);
-  			  console.log('Downloading... '+ count+'/'+req.query.p + '('+(count++/req.query.p*100).toFixed(1)+'%)');
+  			  console.log('Downloading... '+ count++ +'/'+req.query.p||'unknown' + '('+(count++/(req.query.p||1)*100).toFixed(1)+'%)');
   			  callback(null,items);
   			});
   		},function(err,result){
