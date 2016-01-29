@@ -10,7 +10,7 @@ var eventproxy = require('eventproxy');
 var async = require('async');
 
 var app = express();
-var log = {};
+var log = [];
 var ep = new eventproxy();
 
 if(fs.existsSync(PATH)){
@@ -36,11 +36,12 @@ var unsplashImg = function(sres,req){
   $('.photo__image-container').each(function (idx, element) {
     // console.log(element);
     var $element = $(element);
-    var pid = $element.children('img').attr('src').match(/-[0-9]+-[0-9 a-z]+/);
-    if (pid && pid[0].length > 20){
+    // var pid = $element.children('img').attr('src').match(/-[0-9]+-[0-9 a-z]+/);
+    var src = $element.children('img').attr('src').split('?');
+    if (src && src.length == 2){
       items.push({
-        title: pid[0],
-        href: 'https://images.unsplash.com/photo' + pid + '?dpr=1.00&fit=crop&fm=jpg&q=100'
+        title: src[0],
+        href: /*'https://images.unsplash.com/photo' + pid*/src[0] + '?dpr=1.00&fit=crop&fm=jpg&q=100'
       });
     }
   });
@@ -49,8 +50,11 @@ var unsplashImg = function(sres,req){
 
 
 app.get('/photo.js', function (req, res, next) {
-  
-    res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+util.format('&h=%s&w=%s',req.query.h||'',req.query.w||'')+'\'');
+    if(log.length){
+      res.end('var bgimgUrl=\''+log[parseInt(Math.random()*log.length)].href+util.format('&h=%s&w=%s',req.query.h||'',req.query.w||'')+'\'');
+    }else{
+      res.end('No data!');
+    }
 });
 
 app.get('/update', function (req, res, next) {
