@@ -120,7 +120,7 @@ app.get('/update', function (req, res, next) {
   			    return next(err);
   			  }
   			  var items = unsplashImg(sres,req);
-  			  console.log('Downloading... '+ count++ +'/'+req.query.p||'unknown' + '('+(count++/(req.query.p||1)*100).toFixed(1)+'%)');
+  			  console.log('Downloading... '+ count++ +'/'+req.query.p||'unknown' + '('+(count++(req.query.p||1)*100).toFixed(1)+'%)');
   			  callback(null,items);
   			});
   		},function(err,result){
